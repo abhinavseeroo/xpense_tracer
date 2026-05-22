@@ -304,10 +304,10 @@ class _ExpenseItemWidgetState extends State<ExpenseItemWidget> {
                               context.read<AddExpenseBloc>().add(
                                   EditExpenseEvent(
                                       id: widget.expense.id,
-                                      amount: widget.expense.amount ?? "",
-                                      category: widget.expense.category ?? "",
+                                      amount: amountTextController.text.trim(),
+                                      category: categoryTextController.text.trim(),
                                       description:
-                                          widget.expense.description ?? ""));
+                                          descriptionTextController.text.trim()));
                               Navigator.of(context).pop();
                             },
                             child: const Text('Edit')),
