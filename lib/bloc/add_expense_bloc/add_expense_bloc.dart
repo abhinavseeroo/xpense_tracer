@@ -10,6 +10,7 @@ class AddExpenseBloc extends Bloc<AddExpenseEvent, AddExpenseState> {
   AddExpenseBloc() : super(AddExpenseState.initial()) {
     on<NewExpenseAddEvent>(addExpense);
     on<EditExpenseEvent>(editExpense);
+    on<RemoveExpenseEvent>(removeExpense);
   }
 
   void addExpense(NewExpenseAddEvent event, Emitter<AddExpenseState> emit) {
