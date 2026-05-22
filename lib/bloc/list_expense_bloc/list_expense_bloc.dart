@@ -1,35 +1,35 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../models/expense_model.dart';
+import '../add_expense_bloc/add_expense_bloc.dart';
 
 part 'list_expense_event.dart';
 part 'list_expense_state.dart';
 
-class ListExpenseBloc extends Bloc<ListExpenseEvent, ListExpenseState> {
-  ListExpenseBloc() : super(ListExpensesState.initial()) {
-    on<ListExpenseEvent>(showExpenses);
-  }
-  void showExpenses() {
-    List<Todo> _filteredTodos;
+class ListExpenseBloc extends Bloc<ListExpenseEvent, ListExpensesState> {
+  final AddExpenseBloc addExpenseBloc;
+  late final StreamSubscription _addExpenseSubscription;
 
-    switch (todoFilterBloc.state.filter) {
-      case Filter.active:
-        _filteredTodos = todoListBloc.state.todos.where((Todo todo) => !todo.isCompleted).toList();
-        break;
-      case Filter.completed:
-        _filteredTodos = todoListBloc.state.todos.where((Todo todo) => todo.isCompleted).toList();
-        break;
-      case Filter.all:
-      default:
-        _filteredTodos = todoListBloc.state.todos;
-        break;
-    }
-    if (todoSearchBloc.state.searchTerm.isNotEmpty) {
-      _filteredTodos = _filteredTodos
-          .where((Todo todo) => todo.desc.toLowerCase().contains(todoSearchBloc.state.searchTerm))
-          .toList();
-    }
-    add(calculateFilteredTodosEvent(filteredTodos: _filteredTodos));
+  ListExpenseBloc({required this.addExpenseBloc})
+      : super(ListExpensesState(expenses: addExpenseBloc.state.expenses)) {
+    on<ShowExpensesEvent>(_onShowExpenses);
+
+    _addExpenseSubscription = addExpenseBloc.stream.listen((addExpenseState) {
+      add(ShowExpensesEvent(expense: addExpenseState.expenses));
+    });
+  }
+
+  void _onShowExpenses(
+      ShowExpensesEvent event, Emitter<ListExpensesState> emit) {
+    emit(state.copyWith(expenses: event.expense));
+  }
+
+  @override
+  Future<void> close() {
+    _addExpenseSubscription.cancel();
+    return super.close();
   }
 }

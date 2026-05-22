@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:xpense_tracker/bloc/add_expense_bloc/add_expense_bloc.dart';
-import 'package:xpense_tracker/cubits/list_expenses/list_expenses_cubit.dart';
+import 'package:xpense_tracker/bloc/list_expense_bloc/list_expense_bloc.dart';
 import 'package:xpense_tracker/models/expense_model.dart';
 
-import '../cubits/add_expense/add_expense_cubit.dart';
 import 'Widgets/delete_confirmation_dialogue.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -16,7 +15,7 @@ class HomeScreen extends StatelessWidget {
     final TextEditingController amountController = TextEditingController();
     final TextEditingController categoryController = TextEditingController();
     final TextEditingController descriptionController = TextEditingController();
-    final expenses = context.watch<ListExpensesCubit>().state.expenses;
+    final expenses = context.watch<ListExpenseBloc>().state.expenses;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
