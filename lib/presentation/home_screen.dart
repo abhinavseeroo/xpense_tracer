@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:xpense_tracker/bloc/add_expense_bloc/add_expense_bloc.dart';
 import 'package:xpense_tracker/cubits/list_expenses/list_expenses_cubit.dart';
 import 'package:xpense_tracker/models/expense_model.dart';
 
@@ -74,8 +75,8 @@ class HomeScreen extends StatelessWidget {
                         },
                         onDismissed: (direction) {
                           context
-                              .read<AddExpenseCubit>()
-                              .removeExpense(expense);
+                              .read<AddExpenseBloc>()
+                              .add(RemoveExpenseEvent(expense: expense));
                         },
                         child: ExpenseItemWidget(expense: expense));
                   },
@@ -177,10 +178,10 @@ class HomeScreen extends StatelessWidget {
                                 BorderRadius.all(Radius.circular(10))),
                       ),
                       onPressed: () {
-                        context.read<AddExpenseCubit>().addExpense(
-                            amountController.text.trim(),
-                            descriptionController.text.trim(),
-                            categoryController.text.trim());
+                        context.read<AddExpenseBloc>().add(NewExpenseAddEvent(
+                            amount: amountController.text.trim(),
+                            category: categoryController.text.trim(),
+                            description: descriptionController.text.trim()));
                         amountController.clear();
                         descriptionController.clear();
                         categoryController.clear();
@@ -301,11 +302,13 @@ class _ExpenseItemWidgetState extends State<ExpenseItemWidget> {
                             child: const Text('Cancel')),
                         TextButton(
                             onPressed: () {
-                              context.read<AddExpenseCubit>().editExpense(
-                                  widget.expense.id ?? "",
-                                  amountTextController.text.trim(),
-                                  descriptionTextController.text.trim(),
-                                  categoryTextController.text.trim());
+                              context.read<AddExpenseBloc>().add(
+                                  EditExpenseEvent(
+                                      id: widget.expense.id,
+                                      amount: widget.expense.amount ?? "",
+                                      category: widget.expense.category ?? "",
+                                      description:
+                                          widget.expense.description ?? ""));
                               Navigator.of(context).pop();
                             },
                             child: const Text('Edit')),
