@@ -8,11 +8,14 @@ part 'add_expense_state.dart';
 
 class AddExpenseBloc extends Bloc<AddExpenseEvent, AddExpenseState> {
   AddExpenseBloc() : super(AddExpenseState.initial()) {
+    on<ListExpensesEvent>(listExpenses);
     on<NewExpenseAddEvent>(addExpense);
     on<EditExpenseEvent>(editExpense);
     on<RemoveExpenseEvent>(removeExpense);
   }
-
+  void listExpenses(ListExpensesEvent event, Emitter<AddExpenseState> emit) {
+    emit(state.copyWith(expenses: state.expenses));
+  }
   void addExpense(NewExpenseAddEvent event, Emitter<AddExpenseState> emit) {
     final expenses = Expense(
         amount: event.amount,

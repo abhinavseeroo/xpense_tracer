@@ -59,3 +59,9 @@ class RemoveExpenseEvent extends AddExpenseEvent {
     return 'RemoveExpenseEvent(id: $expense)';
   }
 }
+class ListExpensesEvent extends AddExpenseEvent {
+  const ListExpensesEvent();
+
+  @override
+  List<Object?> get props => [];
+}
