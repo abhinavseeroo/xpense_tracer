@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
-import 'package:xpense_tracker/cubits/list_expenses/list_expenses_cubit.dart';
 import 'package:xpense_tracker/models/expense_model.dart';
 
 import '../cubits/add_expense/add_expense_cubit.dart';
@@ -15,77 +14,85 @@ class HomeScreen extends StatelessWidget {
     final TextEditingController amountController = TextEditingController();
     final TextEditingController categoryController = TextEditingController();
     final TextEditingController descriptionController = TextEditingController();
-    final expenses = context.watch<ListExpensesCubit>().state.expenses;
+    // final expenses = context
+    //     .watch<ListExpensesCubit>()
+    //     .state
+    //     .expenses;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
       ),
-      body: Column(
-        children: [
-          const SizedBox(height: 20),
-          expenses.isEmpty
-              ? const Expanded(
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.receipt_long_outlined,
-                          size: 64,
-                          color: Colors.grey,
+      body: BlocBuilder<AddExpenseCubit, AddExpenseState>(
+        builder: (context, state) {
+          final expenses = state.expenses;
+          return Column(
+            children: [
+              const SizedBox(height: 20),
+              expenses.isEmpty
+                  ? const Expanded(
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.receipt_long_outlined,
+                              size: 64,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              "No expenses yet!",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              "Tap + to add your first expense",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 16),
-                        Text(
-                          "No expenses yet!",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          "Tap + to add your first expense",
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              : ListView.separated(
-                  primary: false,
-                  shrinkWrap: true,
-                  itemCount: expenses.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final expense = expenses[index];
-                    return Dismissible(
-                        key: ValueKey(expense.id),
-                        background: showBackGround(0),
-                        secondaryBackground: showBackGround(1),
-                        confirmDismiss: (direction) async {
-                          return await showDialog<bool>(
-                            context: context,
-                            builder: (context) =>
-                                DeleteConfirmationDialog(expense: expense),
-                          );
-                        },
-                        onDismissed: (direction) {
-                          context
-                              .read<AddExpenseCubit>()
-                              .removeExpense(expense);
-                        },
-                        child: ExpenseItemWidget(expense: expense));
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const SizedBox(
-                      height: 10,
-                    );
-                  },
-                )
-        ],
+                      ),
+                    )
+                  : ListView.separated(
+                      primary: false,
+                      shrinkWrap: true,
+                      itemCount: expenses.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        final expense = expenses[index];
+                        return Dismissible(
+                            key: ValueKey(expense.id),
+                            background: showBackGround(0),
+                            secondaryBackground: showBackGround(1),
+                            confirmDismiss: (direction) async {
+                              return await showDialog<bool>(
+                                context: context,
+                                builder: (context) =>
+                                    DeleteConfirmationDialog(expense: expense),
+                              );
+                            },
+                            onDismissed: (direction) {
+                              context
+                                  .read<AddExpenseCubit>()
+                                  .removeExpense(expense);
+                            },
+                            child: ExpenseItemWidget(expense: expense));
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const SizedBox(
+                          height: 10,
+                        );
+                      },
+                    )
+            ],
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,

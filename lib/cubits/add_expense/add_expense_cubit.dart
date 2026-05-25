@@ -7,6 +7,10 @@ part 'add_expense_state.dart';
 class AddExpenseCubit extends Cubit<AddExpenseState> {
   AddExpenseCubit() : super(AddExpenseState.initial());
 
+  void listExpenses() {
+    emit(state.copyWith(expenses: state.expenses));
+  }
+
   void addExpense(String amount, String description, String category) {
     final expense =
         Expense(amount: amount, description: description, category: category);
